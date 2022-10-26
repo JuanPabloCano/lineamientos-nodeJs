@@ -1,0 +1,302 @@
+# Lineamientos de NodeJs
+
+## Nomenclatura para variables, constantes, funciones y clases
+
+Se debe usar **lowerCamelCase** para el nombramiento de **_constantes, variables y funciones_**
+
+```cs
+function doSomething() {
+  const someConstExample = "immutable value";
+  let someMutableExample = "mutable value";
+}
+```
+
+Se debe usar **UPPER_SNAKE_CASE** para el nombramiento de variables **_globales o estáticas_**
+
+```cs
+let MUTABLE_GLOBAL = "mutable value"
+const GLOBAL_CONSTANT = "immutable value";
+const CONFIG = {
+  key: "value",
+};
+```
+
+Se debe usar **UpperCamelCase** para el nombramiento de **_clases_**
+
+```cs
+class SomeClassExample {
+  static STATIC_PROPERTY = "value";
+}
+```
+
+## Usar **_const_** preferiblemente. Nunca usar **_var_**
+
+Esto hará el código más limpio, al no poder reasignar valores a variables ya declaradas ni a darle diferentes usos. Si se necesita reasignar una variable, usar **let**
+
+```cs
+const someVariable = 0 // Good
+
+function myFunction(assign) {
+  let myVariable = 46
+  myVariable = assign  // Good
+  console.log(myVariable)
+}
+myFunction('This is a reassignation text')
+
+var myVar = 3 // Bad
+```
+
+## Agregar punto y coma ( **_;_** ) al finalizar una sentencia
+
+```cs
+const myVariable = 'This is a demo variable';
+const myFunction = () => {
+  return 'Hello World';
+}
+myFunction();
+```
+
+## Convenciones de diseño
+
+Un buen diseño utiliza un formato que destaque la estructura del código y haga que el mismo sea más fácil de leer, mantener y escalar en el tiempo. Para esto es posible utilizar formateadores de código como **_ESLint_** y **_Prettier_**
+
+- Añadir el **_Type: module_** en el **package.json** para hacer uso de la sintáxis **_import/export_** y los modulos de **ES6**
+```cs
+"type":"module",
+```
+- Hacer uso de **condicionales de una sola línea** siempre y cuando el condicional, el número de parametros y el retorno sean cortos:
+
+```cs
+if(condicion) return // code;
+```
+
+- Hacer uso de **_Early return_** al evaluar primero la negacion del condicional, esto ayudará a disminuir el uso de **_else_**:
+
+```cs
+if(!condicion) {
+  // code
+}
+return // code
+```
+
+- Abrir las llaves en la misma línea de las clases y funciones:
+
+```cs
+// Good
+function someFunction() {
+  // code block
+}
+
+// Bad
+function someFunction()
+{
+  // code block
+}
+```
+
+- Siempre nombrar las funciones y los callbacks lo más descriptivo posible, evitar el uso de funciones anónimas:
+
+```cs
+function displayUserInfo(userId, showUserInfo){
+  setTimeout(() => {
+    const userInfo = `UserId: ${userId}`;
+    showUserInfo(userId, userInfo);
+  }, 2000);
+}
+```
+
+- Usar el operador estricto ( **===** ) en vez del operador de igualdad ( **==** ):
+
+```cs
+if(condicion === condicion2) {
+  return // code
+}
+```
+
+- Usar _**async / await**_ en vez de **callbacks**:
+
+```cs
+const myFunction = async(value) => {
+  const data = await value;
+  return data;
+}
+```
+- No abusar del uso del condicional ternario, en ocasiones puede afectar la legibilidad del propio código. Usarlo para asignarle un valor a una variable o dentro de una función, dependiendo del tipo de uso que se quiera darle. Evitar usarlo como principal método para evaluar condicionales.
+
+- Como lenguaje se utilizará el **_Inglés_** para el nombramiento de carpetas, archivos, variables, funciones, clases y demás.
+
+## Convenciones de arquitectura de carpetas
+
+Un buen diseño utiliza un formato que destaque la estructura del código y haga que el mismo sea más fácil de leer, mantener y escalar en el tiempo. Se utilizará el concepto de clean architecture en NodeJs.
+
+### Consideraciones
+- El nombre de las carpetas será todo en minúsculas y en inglés.
+- Las subcarpetas principales del dominio y la infraestructura se escribirán en plural.
+- El nombre del archivo de las entidades de dominio deberá comenzar con letra mayúscula estilo **_Capitalcase_**
+- El nombre de los casos de uso, controladores y routes deberá llevar como sufijo el nombre de su respectiva carpeta seguido de un punto, por ejemplo: **_createEntity.usecase.js_**, **_entity.controller.js_**, **_entity.routes.js_**
+
+### Diseño
+
+```cs
+application
+  |- config
+  |  |- database
+  |  |  |- index.js
+  |  |- swagger
+  |  |  |- index.js
+  |- app.js
+domain
+  |- models
+  |  |- exampleEntity
+  |  |  |- Entity.js
+  |- usecases
+  |  |- exampleEntity
+  |  |  |- entity.usecase.js
+infrastructure
+  |- controllers
+  |  |- entity.controller.js
+  |- routes
+  |  |- entity.routes.js
+server.js
+```
+
+## Git Ignore
+Agregar en el **_.gitignore_** carpetas como **node_modules**, **package-lock.json**, **.env**, **build/dist** y demás archivos que no sean requeridos o visibles en producción.
+
+### Formato de ejemplo .gitignore:
+
+```cs
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+build
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp and cache directory
+.temp
+.cache
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+.idea
+```
